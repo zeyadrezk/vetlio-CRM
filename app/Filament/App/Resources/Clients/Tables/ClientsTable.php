@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Filament\App\Resources\Clients\Tables;
+
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SpatieTagsColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class ClientsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                ImageColumn::make('avatar_url')
+                    ->width('40px')
+                    ->circular()
+                    ->label(''),
+
+                TextColumn::make('fullName')
+                    ->sortable()
+                    ->searchable(true, function ($query, $search) {
+                        return $query->where(function ($query) use ($search) {
+                            return $query->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%");
+                        });
+                    })
+                    ->label('Ime i prezime'),
+
+                TextColumn::make('email')
+                    ->searchable()
+                    ->sortable()
+                    ->icon(Heroicon::AtSymbol)
+                    ->copyable()
+                    ->label('Email'),
+
+                TextColumn::make('phone')
+                    ->searchable()
+                    ->sortable()
+                    ->icon(Heroicon::Phone)
+                    ->copyable()
+                    ->label('Telefon'),
+
+                TextColumn::make('full_address')
+                    ->sortable()
+                    ->label('Adresa'),
+
+                TextColumn::make('country.name')
+                    ->icon(Heroicon::Flag)
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('Država'),
+
+                SpatieTagsColumn::make('tags')
+                    ->label('Oznake'),
+
+                TextColumn::make('items_to_pay_sum_total')
+                    ->label('Ukupno dugovanje')
+                    ->default(0)
+                    ->alignEnd()
+                    ->weight(function($state) {
+                        return $state > 0 ? FontWeight::SemiBold : null;
+                    })
+                    ->color(function($state) {
+                        return $state > 0 ? 'danger' : null;
+                    })
+                    ->money('EUR', 100)
+                    ->sum('itemsToPay', 'total'),
+
+                TextColumn::make('invoices_sum_total')
+                    ->label('Ukupno naplaćeno')
+                    ->color('success')
+                    ->default(0)
+                    ->alignRight()
+                    ->weight(FontWeight::SemiBold)
+                    ->money('EUR', 100)
+                    ->sum('invoices', 'total')
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+            ]);
+    }
+}

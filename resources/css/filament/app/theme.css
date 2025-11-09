@@ -1,0 +1,32 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+@import '../../../../vendor/guava/calendar/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+@source '../../../../vendor/codewithdennis/filament-simple-alert/resources/**/*.blade.php';
+@source inline('animate-{spin,pulse,bounce}');
+@source '../../../../vendor/awcodes/palette/resources/**/*.blade.php';
+@source '../../../../vendor/guava/calendar/resources/**/*';
+@source '../../../../resources/views/calendar/**/*';
+@source '../../../../vendor/awcodes/filament-quick-create/resources/**/*.blade.php';
+@source '../../../../vendor/guava/filament-modal-relation-managers/resources/**/*';
+
+/* Task Form */
+.morph-related-select  {
+    &.fi-fieldset-not-contained {
+        padding-top: 6px !important;
+    }
+}
+
+/* Calendar */
+.ec-header .ec-day {
+    min-height:50px;
+}
+.ec-time-grid .ec-time, .ec-time-grid .ec-line {
+    height: 50px;  /* override this value */
+}
+
+.fi-modal-close-overlay{
+    @apply backdrop-blur-sm;
+}

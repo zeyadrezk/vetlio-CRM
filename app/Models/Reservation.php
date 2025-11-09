@@ -1,0 +1,182 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\ReservationStatus;
+use App\Observers\ReservationObserver;
+use App\Traits\AddedByCurrentUser;
+use App\Traits\Organisationable;
+use Guava\Calendar\Contracts\Eventable;
+use Guava\Calendar\ValueObjects\CalendarEvent;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+#[ObservedBy([ReservationObserver::class])]
+class Reservation extends Model implements Eventable
+{
+    /** @use HasFactory<\Database\Factories\ReservationFactory> */
+    use HasFactory, SoftDeletes, Organisationable, AddedByCurrentUser;
+
+    protected $fillable = [
+        'date',
+        'from',
+        'to',
+        'client_id',
+        'patient_id',
+        'status_id',
+        'branch_id',
+        'note',
+        'service_provider_id',
+        'user_id',
+        'reason_for_coming',
+        'room_id',
+        'service_id',
+        'canceled_at',
+        'canceled',
+        'cancel_reason',
+        'waiting_room_at',
+        'in_process_at',
+        'completed_at',
+        'confirmed_status_id',
+        'confirmed_at',
+        'confirmed_note',
+    ];
+
+    protected $casts = [
+        'date' => 'date',
+        'from' => 'datetime',
+        'to' => 'datetime',
+        'canceled_at' => 'datetime',
+        'confirmed_at' => 'datetime',
+    ];
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function patient(): BelongsTo
+    {
+        return $this->belongsTo(Patient::class);
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
+    }
+
+    public function serviceProvider(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'service_provider_id');
+    }
+
+    public function room(): BelongsTo
+    {
+        return $this->belongsTo(Room::class, 'room_id');
+    }
+
+    public function reservationReminders(): HasMany
+    {
+        return $this->hasMany(ReservationReminder::class, 'reservation_id');
+    }
+
+    public function incrementStatus(): bool
+    {
+        $currentStatus = $this->status_id;
+
+        if ($currentStatus == ReservationStatus::Completed->value) return false;
+
+        $this->update([
+            'status_id' => $currentStatus + 1
+        ]);
+
+        $this->updateReservationTimesOnIncrement();
+
+        return true;
+    }
+
+    private function updateReservationTimesOnIncrement(): void
+    {
+        if ($this->status_id == ReservationStatus::WaitingRoom->value) {
+            $this->update([
+                'waiting_room_at' => now(),
+            ]);
+        } else if ($this->status_id == ReservationStatus::InProcess->value) {
+            $this->update([
+                'in_process_at' => now(),
+            ]);
+        } else if ($this->status_id == ReservationStatus::Completed->value) {
+            $this->update([
+                'completed_at' => now(),
+            ]);
+        }
+    }
+
+    public function decrementStatus(): bool
+    {
+        $currentStatus = $this->status_id;
+
+        if ($currentStatus == ReservationStatus::Ordered->value) return false;
+
+        $this->update([
+            'status_id' => $currentStatus - 1
+        ]);
+
+        $this->updateReservationTimesOnDecrement();
+
+        return true;
+    }
+
+    private function updateReservationTimesOnDecrement(): void
+    {
+        if ($this->status_id == ReservationStatus::Ordered->value) {
+            $this->update([
+                'completed_at' => null,
+                'waiting_room_at' => null,
+                'in_process_at' => null,
+            ]);
+        } else if ($this->status_id == ReservationStatus::WaitingRoom->value) {
+            $this->update([
+                'waiting_room_at' => now(),
+                'in_process_at' => null,
+                'completed_at' => null,
+            ]);
+        } else if ($this->status_id == ReservationStatus::InProcess->value) {
+            $this->update([
+                'in_process_at' => now(),
+                'completed_at' => null,
+            ]);
+        } else if ($this->status_id == ReservationStatus::Completed->value) {
+            $this->update([
+                'completed_at' => now(),
+            ]);
+        }
+    }
+
+    public function toCalendarEvent(): CalendarEvent
+    {
+        return CalendarEvent::make($this)
+            ->title($this->client->full_name)
+            ->extendedProps([
+                'start' => $this->from->format('H:i'),
+                'end' => $this->to->format('H:i'),
+                'client' => $this->client->full_name,
+                'service' => $this->service->name,
+                'location' => $this->branch->name
+            ])
+            ->resourceId($this->serviceProvider->id)
+            ->startEditable()
+            ->backgroundColor($this->service->color ?? '#8bc34a')
+            ->start($this->from)
+            ->end($this->to);
+    }
+}

@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Filament\App\Resources\Invoices\Pages;
+
+use App\Enums\Icons\PhosphorIcons;
+use App\Filament\App\Resources\Invoices\InvoiceResource;
+use App\Filament\App\Schemas\NoteForm;
+use App\Filament\App\Tables\NotesTable;
+use BackedEnum;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
+use Livewire\Livewire;
+
+class InvoiceNotes extends ManageRelatedRecords
+{
+    protected static string $resource = InvoiceResource::class;
+
+    protected static string $relationship = 'notes';
+
+    protected static string|BackedEnum|null $navigationIcon = PhosphorIcons::Note;
+
+    protected static ?string $navigationLabel = 'Napomene';
+
+    protected static ?string $title = 'Napomene';
+
+    public static function getNavigationBadge(): ?string
+    {
+        $record = Livewire::current()->getRecord();
+
+        return $record->notes->count();
+    }
+
+    public function getSubheading(): string|Htmlable|null
+    {
+        return 'Račun: ' . $this->getRecord()->code;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return NoteForm::configure($schema);
+    }
+
+    public function table(Table $table): Table
+    {
+        return NotesTable::configure($table);
+    }
+}

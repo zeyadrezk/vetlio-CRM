@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+    --font-sans: "Arial", sans-serif;
+    --color-brand: #0ea5e9;
+}
+
+@layer utilities {
+    .pdf-page {
+        @apply bg-white text-gray-900 text-sm;
+    }
+}
