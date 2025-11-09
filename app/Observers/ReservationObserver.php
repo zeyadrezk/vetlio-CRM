@@ -26,7 +26,7 @@ class ReservationObserver
         $this->scheduleResources($reservation);
     }
 
-    //Reservation is changeing, delete schedules
+    //Reservation is changing, delete schedules
     public function updating(Reservation $reservation): void
     {
         $this->deleteScheduledResources($reservation);

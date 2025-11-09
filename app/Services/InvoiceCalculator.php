@@ -16,24 +16,19 @@ class InvoiceCalculator
     {
         $discount = $discount ?? 0;
 
-        // Ako je cijena 0, izračunaj iz priceWithTax
         if ($price == 0 && $priceWithTax > 0) {
             $price = $priceWithTax / (1 + $taxRate / 100);
         }
 
-        // Popust po jedinici
         $discountAmountPerUnit = $price * ($discount / 100);
         $priceAfterDiscount = $price - $discountAmountPerUnit;
 
-        // Cijena s PDV-om nakon popusta
         $priceWithTaxAfterDiscount = $priceAfterDiscount * (1 + $taxRate / 100);
 
-        // Ukupne vrijednosti
         $baseTotal = $priceAfterDiscount * $quantity;
         $taxAmount = $baseTotal * ($taxRate / 100);
         $totalWithTax = $baseTotal + $taxAmount;
 
-        // Ukupni popust (bez PDV-a)
         $discountTotal = $discountAmountPerUnit * $quantity;
 
         return [
@@ -62,25 +57,21 @@ class InvoiceCalculator
         $totalWithTax = 0.0;
 
         foreach ($items as $item) {
-            // očekujemo da svaka stavka već ima:
-            // 'base_total', 'tax_amount', 'discount_amount', 'total_with_tax'
+
             $baseTotal += $item['base_total'] ?? 0;
             $taxTotal += $item['tax_amount'] ?? 0;
             $discountTotal += $item['discount_amount'] ?? 0;
             $totalWithTax += $item['total_with_tax'] ?? 0;
         }
 
-        // primjena globalnog popusta
         if ($globalDiscountPercent > 0) {
             $globalDiscountAmount = $baseTotal * ($globalDiscountPercent / 100);
             $baseTotal -= $globalDiscountAmount;
 
-            // proporcionalno smanji porez
             $taxTotal = $taxTotal * ((100 - $globalDiscountPercent) / 100);
 
             $discountTotal += $globalDiscountAmount;
 
-            // ukupno za naplatu
             $totalWithTax = $baseTotal + $taxTotal;
         }
 

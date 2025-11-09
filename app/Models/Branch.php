@@ -26,7 +26,7 @@ class Branch extends Model implements HasCurrentTenantLabel
 
     public function getCurrentTenantLabel(): string
     {
-        return 'Trenutna poslovnica';
+        return 'Current branch';
     }
 
     public function priceList(): BelongsTo

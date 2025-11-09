@@ -105,7 +105,7 @@ class FiscalisationService
             InvoiceFiscalisation::updateOrCreate(
                 ['invoice_id' => $invoice->id],
                 [
-                    'request_xml' => null, // koristi toXml() ako postoji
+                    'request_xml' => null,
                     'response_xml' => $res->document()->textContent ?? null,
                     'zki' => $zastKod,
                     'jir' => $jir,

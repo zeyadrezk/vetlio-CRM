@@ -15,10 +15,10 @@ enum Priority: int implements HasLabel, HasColor
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::Low => 'Niski',
-            self::Normal => 'Srednji',
-            self::High => 'Visoki',
-            self::Urgent => 'Hitno',
+            self::Low => __('enums.priority.low'),
+            self::Normal => __('enums.priority.normal'),
+            self::High => __('enums.priority.high'),
+            self::Urgent => __('enums.priority.urgent'),
         };
     }
 

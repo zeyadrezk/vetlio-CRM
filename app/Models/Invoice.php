@@ -66,8 +66,8 @@ class Invoice extends Model
         return new HasMany(
             $query,
             $this,
-            $instance->getTable().'.id', // local key (fake)
-            $this->getKeyName()          // foreign key (fake)
+            $instance->getTable().'.id',
+            $this->getKeyName()
         );
     }
     protected static function booted(): void
@@ -123,10 +123,10 @@ class Invoice extends Model
         return $this->hasManyThrough(
             Service::class,
             InvoiceItem::class,
-            'invoice_id',   // Foreign key na invoice_items
-            'id',           // Foreign key na services (koji se povezuje s localKey niže)
-            'id',           // Local key na invoices
-            'service_id'    // Local key na invoice_items koji referencira service
+            'invoice_id',
+            'id',
+            'id',
+            'service_id'
         );
     }
 

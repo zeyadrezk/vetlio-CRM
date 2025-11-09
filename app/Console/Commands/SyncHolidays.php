@@ -19,20 +19,17 @@ class SyncHolidays extends Command
 
     public function handle(HolidaySyncService $service): int
     {
-        // Odredi godine: sadašnja + (ako je >= 1.7., dodaj i sljedeću)
         $now = now();
         $years = [$now->year];
         if ($now->month >= 7) {
             $years[] = $now->year + 1;
         }
 
-        // Mode A: preko --org
         if ($orgId = $this->option('org')) {
             $org = Organisation::query()->findOrFail($orgId);
             $country = Country::query()->findOrFail($org->country_id);
             $tenantLang = Language::query()->findOrFail($org->language_id);
 
-            // uvjeri se da imamo minimum: eng i defaultni jezik države i jezik tenant-a
             $langs = collect([$tenantLang, $country->defaultLanguage, Language::where('iso_639_1', 'en')->first()])
                 ->filter()
                 ->unique('id')
@@ -45,7 +42,6 @@ class SyncHolidays extends Command
             return self::SUCCESS;
         }
 
-        // Mode B: direktno country + languages
         if ($iso2 = $this->option('country')) {
             $country = Country::where('iso2', strtoupper($iso2))->firstOrFail();
 
@@ -65,7 +61,6 @@ class SyncHolidays extends Command
             return self::SUCCESS;
         }
 
-        // Mode C: sve organizacije
         $this->info('Sync holidays for ALL organisations...');
         $orgs = Organisation::query()->whereNotNull('country_id')->whereNotNull('language_id')->get();
         foreach ($orgs as $org) {

@@ -17,17 +17,17 @@ enum CalendarEventsType: int implements HasLabel, HasColor, HasIcon
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::All => 'Sve',
-            self::Reservations => 'Rezervacije',
-            self::WorkPeriods => 'Termini',
+            self::All => __('enums.calendar_events_type.all'),
+            self::Reservations => __('enums.calendar_events_type.reservations'),
+            self::WorkPeriods => __('enums.calendar_events_type.work_periods'),
         };
     }
 
     public function getColor(): ?string
     {
         return match ($this) {
-            self::All => 'warning',
-            self::Reservations => 'warning',
+            self::All,
+            self::Reservations,
             self::WorkPeriods => 'warning',
         };
     }
@@ -37,7 +37,7 @@ enum CalendarEventsType: int implements HasLabel, HasColor, HasIcon
         return match ($this) {
             self::All => Heroicon::InformationCircle,
             self::Reservations => PhosphorIcons::CalendarPlus,
-            self::WorkPeriods => PhosphorIcons::ClockAfternoon
+            self::WorkPeriods => PhosphorIcons::ClockAfternoon,
         };
     }
 }

@@ -47,7 +47,7 @@ class InvoiceObserver
             'organisation_id' => $invoice->organisation_id,
             'payment_method_id' => $invoice->payment_method_id,
             'transaction_id' => null,
-            'note' => 'Automatska uplata za račun ' . $invoice->code,
+            'note' => 'Auto payment ' . $invoice->code,
             'payment_at' => now(),
             'amount' => $invoice->total,
         ]);

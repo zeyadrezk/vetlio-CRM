@@ -109,7 +109,6 @@ class SequenceGenerator
                 $sequence->save();
             }
 
-            // Formatiraj s paddingom
             $padded = $this->padding
                 ? str_pad($number, $this->padding, '0', STR_PAD_LEFT)
                 : $number;

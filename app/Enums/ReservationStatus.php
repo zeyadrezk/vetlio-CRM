@@ -14,10 +14,10 @@ enum ReservationStatus: int implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::Ordered => 'Naručen',
-            self::WaitingRoom => 'Čekaonica',
-            self::InProcess => 'U obradi',
-            self::Completed => 'Završen',
+            self::Ordered => __('enums.reservation_status.ordered'),
+            self::WaitingRoom => __('enums.reservation_status.waiting_room'),
+            self::InProcess => __('enums.reservation_status.in_process'),
+            self::Completed => __('enums.reservation_status.completed'),
         };
     }
 }

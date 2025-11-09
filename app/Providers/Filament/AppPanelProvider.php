@@ -82,7 +82,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->userMenuItems([
                 Action::make('settings')
-                    ->label('Postavke')
+                    ->label('Settings')
                     ->visible(function () {
                         return auth()->user()->administrator;
                     })

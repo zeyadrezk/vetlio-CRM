@@ -16,9 +16,9 @@ enum PaymentMethod: int implements HasLabel, HasIcon
     public function getLabel(): string
     {
         return match ($this) {
-            self::CASH => 'Gotovina',
-            self::BANK => 'Banka',
-            self::CARD => 'Kartica',
+            self::CASH => __('enums.payment_method.cash'),
+            self::BANK => __('enums.payment_method.bank'),
+            self::CARD => __('enums.payment_method.card'),
         };
     }
 
@@ -30,5 +30,4 @@ enum PaymentMethod: int implements HasLabel, HasIcon
             self::CARD => PhosphorIcons::CreditCard,
         };
     }
-
 }

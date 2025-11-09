@@ -16,9 +16,9 @@ enum TaskStatus: int implements HasLabel, HasColor, HasIcon
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::Created => 'Kreirane',
-            self::InProgress => 'U izradi',
-            self::Completed => 'Završen',
+            self::Created => __('enums.task_status.created'),
+            self::InProgress => __('enums.task_status.in_progress'),
+            self::Completed => __('enums.task_status.completed'),
         };
     }
 
@@ -36,7 +36,7 @@ enum TaskStatus: int implements HasLabel, HasColor, HasIcon
         return match ($this) {
             self::Created => Heroicon::InformationCircle,
             self::InProgress => Heroicon::Swatch,
-            self::Completed => Heroicon::Check
+            self::Completed => Heroicon::Check,
         };
     }
 }

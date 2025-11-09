@@ -38,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->initGate();
         Number::useCurrency('EUR');
+
         //Filament
         $this->configureFilamentActions();
         $this->configureFilamentComponents();
@@ -47,8 +48,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Table::configureUsing(function (Table $table) {
             $table->striped(true);
-            $table->emptyStateHeading('Nema podataka');
-            $table->emptyStateDescription('Trenutno nema podataka za odabrani prikaz');
+            $table->emptyStateHeading('No data');
+            $table->emptyStateDescription('Currently there is no data to display.');
             $table->emptyStateIcon(PhosphorIcons::MinusCircle);
             $table->emptyStateActions([CreateAction::make()]);
         });
@@ -76,8 +77,8 @@ class AppServiceProvider extends ServiceProvider
     public function configureFilamentActions(): void
     {
         CreateAction::configureUsing(function (CreateAction $action) {
-            $action->label('Dodaj');
-            $action->modalHeading('Novi upis');
+            $action->label('Add');
+            $action->modalHeading('Add new item');
             $action->icon(Heroicon::Plus);
             $action->slideOver();
             $action->modalIcon(Heroicon::Plus);
@@ -85,7 +86,7 @@ class AppServiceProvider extends ServiceProvider
 
         EditAction::configureUsing(function (EditAction $action) {
             $action->hiddenLabel();
-            $action->modalHeading('Izmjena unosa');
+            $action->modalHeading('Edit item');
             $action->icon(Heroicon::Pencil);
             $action->slideOver();
             $action->modalIcon(Heroicon::Pencil);
@@ -93,7 +94,7 @@ class AppServiceProvider extends ServiceProvider
 
         DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->hiddenLabel();
-            $action->modalHeading('Brisanje stavke');
+            $action->modalHeading('Delete item');
             $action->icon(Heroicon::Trash);
             $action->modalIcon(Heroicon::Trash);
         });
@@ -101,7 +102,7 @@ class AppServiceProvider extends ServiceProvider
         ViewAction::configureUsing(function (ViewAction $action) {
             $action->label('');
             $action->hiddenLabel();
-            $action->modalHeading('Pregled');
+            $action->modalHeading('View');
             $action->icon(Heroicon::Eye);
             $action->slideOver();
             $action->modalIcon(Heroicon::Eye);

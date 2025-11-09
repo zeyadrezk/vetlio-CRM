@@ -11,7 +11,7 @@ class ServiceObserver
     {
         $code = SequenceGenerator::make()
             ->withModel('SERVICE')
-            ->withPattern('USL-{{number}}')
+            ->withPattern('SER-{{number}}')
             ->withPadding(5)->generate()['sequence'];;
 
         $model->code = $code;
