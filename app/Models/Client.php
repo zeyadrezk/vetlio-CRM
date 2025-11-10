@@ -98,6 +98,18 @@ class Client extends Authenticatable implements HasName, HasAvatar, MustVerifyEm
         )->whereNull('invoice_id');
     }
 
+    public function medicalDocuments(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            MedicalDocument::class,
+            Patient::class,
+            'client_id',
+            'patient_id',
+            'id',
+            'id'
+        );
+    }
+
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class, 'client_id');
@@ -156,10 +168,12 @@ class Client extends Authenticatable implements HasName, HasAvatar, MustVerifyEm
     {
         return $this->hasMany(Patient::class, 'client_id');
     }
+
     public function nextUnreadAnnouncement(): ?\App\Models\Announcement
     {
         return $this->unreadAnnouncements()->orderBy('created_at')->first();
     }
+
     public function relatedValue()
     {
         return $this->full_name;
