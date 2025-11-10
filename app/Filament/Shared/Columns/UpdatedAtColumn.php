@@ -11,9 +11,14 @@ class UpdatedAtColumn extends TextColumn
         parent::setUp();
 
         $this->name('updated_at');
-        $this->label(__('tables.columns.updated_at'));
+        $this->label('Updated at');
         $this->dateTime();
         $this->sortable();
         $this->toggleable(isToggledHiddenByDefault: true);
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'updated_at';
     }
 }

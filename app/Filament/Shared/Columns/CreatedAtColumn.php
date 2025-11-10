@@ -11,9 +11,14 @@ class CreatedAtColumn extends TextColumn
         parent::setUp();
 
         $this->name('created_at');
-        $this->label(__('tables.columns.created_at'));
+        $this->label('Created at');
         $this->dateTime();
         $this->sortable();
         $this->toggleable(isToggledHiddenByDefault: true);
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'created_at';
     }
 }
