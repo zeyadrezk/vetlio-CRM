@@ -39,6 +39,11 @@ A modern, multi-tenant CRM for veterinary practices — scheduling clients & pat
   <img src="docs/screenshots/portal.png" alt="Screenshot placeholder 1" width="720" />
 </p>
 
+<p align="center">
+  <!-- SCREENSHOT PLACEHOLDERS -->
+  <img src="docs/screenshots/portal-appointment-request.png" alt="Screenshot placeholder 1" width="720" />
+</p>
+
 ---
 
 ## Features

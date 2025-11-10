@@ -39,9 +39,6 @@ class PatientsTable
 
                 TextColumn::make('gender_id')
                     ->sortable()
-                    ->formatStateUsing(function ($state) {
-                        return PatientGender::from($state)->getLabel();
-                    })
                     ->searchable()
                     ->label('Gender'),
 
@@ -51,7 +48,7 @@ class PatientsTable
                     ->sortable()
                     ->description(function ($state) {
                         if ($state != null) {
-                            return Carbon::parse($state)->diffInYears(now()) . ' years old';
+                            return Carbon::parse($state)->age . ' years old';
                         }
 
                         return null;
