@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\Admin;
 use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -29,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Red,
             ])
             ->font('Mulish')
             ->maxContentWidth(Width::ScreenTwoExtraLarge)
@@ -52,6 +53,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentDeveloperLoginsPlugin::make()
                     ->enabled(app()->isLocal())
                     ->switchable(false)
+                    ->modelClass(Admin::class)
                     ->users([
                         'Admin' => 'admin@admin.com',
                     ]),
