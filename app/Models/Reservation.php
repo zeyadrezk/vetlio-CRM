@@ -49,6 +49,7 @@ class Reservation extends Model implements Eventable
     ];
 
     protected $casts = [
+        'status_id' => ReservationStatus::class,
         'date' => 'date',
         'from' => 'datetime',
         'to' => 'datetime',
@@ -57,7 +58,7 @@ class Reservation extends Model implements Eventable
     ];
 
     #[Scope]
-    public function canceled(Builder $query, $canceled): void
+    public function canceled(Builder $query, $canceled = true): void
     {
         $query->when(
             $canceled,

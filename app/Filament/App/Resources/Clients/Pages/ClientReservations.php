@@ -81,18 +81,18 @@ class ClientReservations extends ManageRelatedRecords
             'active' => Tab::make()
                 ->label('Active')
                 ->badge(function (Builder $query) {
-                    return $this->getRecord()->reservations()->whereCanceled(false)->count();
+                    return $this->getRecord()->reservations()->canceled(false)->count();
                 })
                 ->icon(PhosphorIcons::CalendarCheck)
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('canceled', false)),
+                ->modifyQueryUsing(fn(Builder $query) => $query->canceled(false)),
             'canceled' => Tab::make()
                 ->label('Canceled')
                 ->badgeColor('danger')
                 ->badge(function (Builder $query) {
-                    return $this->getRecord()->reservations()->whereCanceled(true)->count();
+                    return $this->getRecord()->reservations()->canceled(false)->count();
                 })
                 ->icon(PhosphorIcons::CalendarX)
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('canceled', true)),
+                ->modifyQueryUsing(fn(Builder $query) => $query->canceled()),
         ];
     }
 }

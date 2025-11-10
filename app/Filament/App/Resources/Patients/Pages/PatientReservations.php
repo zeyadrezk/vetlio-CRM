@@ -54,7 +54,7 @@ class PatientReservations extends ManageRelatedRecords
                 ViewAction::make(),
                 EditAction::make()
                     ->visible(function($record) {
-                        return !$record->canceled;
+                        return !$record->canceled_at;
                     })
             ])
             ->filters([]);
@@ -72,7 +72,7 @@ class PatientReservations extends ManageRelatedRecords
             'active' => Tab::make()
                 ->label('Active')
                 ->badge(function (Builder $query) {
-                    return $this->getRecord()->reservations()->whereCanceled(false)->count();
+                    return $this->getRecord()->reservations()->canceled(false)->count();
                 })
                 ->icon(PhosphorIcons::CalendarCheck)
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('canceled', false)),
@@ -80,7 +80,7 @@ class PatientReservations extends ManageRelatedRecords
                 ->label('Canceled')
                 ->badgeColor('danger')
                 ->badge(function (Builder $query) {
-                    return $this->getRecord()->reservations()->whereCanceled(true)->count();
+                    return $this->getRecord()->reservations()->canceled(false)->count();
                 })
                 ->icon(PhosphorIcons::CalendarX)
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('canceled', true)),
