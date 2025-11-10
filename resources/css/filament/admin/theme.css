@@ -6,6 +6,7 @@
 @source '../../../../vendor/codewithdennis/filament-simple-alert/resources/**/*.blade.php';
 @source inline('animate-{spin,pulse,bounce}');
 @source '../../../../vendor/awcodes/palette/resources/**/*.blade.php';
+@source '../../../../vendor/devonab/filament-easy-footer/resources/views/**/*';
 
 .fi-modal-close-overlay{
     @apply backdrop-blur-sm;

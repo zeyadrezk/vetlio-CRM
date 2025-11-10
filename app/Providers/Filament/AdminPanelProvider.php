@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Models\Admin;
+use Devonab\FilamentEasyFooter\EasyFooterPlugin;
 use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -50,6 +51,9 @@ class AdminPanelProvider extends PanelProvider
                 FilamentInfoWidget::class,
             ])
             ->plugins([
+                EasyFooterPlugin::make()
+                    ->withGithub(showLogo: true, showUrl: true)
+                    ->withLoadTime(),
                 FilamentDeveloperLoginsPlugin::make()
                     ->enabled(app()->isLocal())
                     ->switchable(false)

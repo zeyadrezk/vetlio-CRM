@@ -11,6 +11,7 @@
 @source '../../../../resources/views/calendar/**/*';
 @source '../../../../vendor/awcodes/filament-quick-create/resources/**/*.blade.php';
 @source '../../../../vendor/guava/filament-modal-relation-managers/resources/**/*';
+@source '../../../../vendor/devonab/filament-easy-footer/resources/views/**/*';
 
 /* Task Form */
 .morph-related-select  {

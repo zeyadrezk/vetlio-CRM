@@ -13,6 +13,7 @@ use App\Http\Middleware\IdentifyTenant;
 use App\Http\Middleware\OrganisationApplySettings;
 use App\Models\Branch;
 use Awcodes\QuickCreate\QuickCreatePlugin;
+use Devonab\FilamentEasyFooter\EasyFooterPlugin;
 use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
@@ -104,6 +105,9 @@ class AppPanelProvider extends PanelProvider
                 OrganisationApplySettings::class,
             ])
             ->plugins([
+                EasyFooterPlugin::make()
+                    ->withGithub(showLogo: true, showUrl: true)
+                    ->withLoadTime(),
                 QuickCreatePlugin::make()
                     ->includes([
                         ClientResource::class,
