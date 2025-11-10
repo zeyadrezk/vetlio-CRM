@@ -30,6 +30,13 @@ class Dashboard extends Page implements HasSchemas
 
     public $defaultAction = 'unreadAnnouncements';
 
+    public bool $hasUnreadAnnouncements = false;
+
+    public function mount(): void
+    {
+        $this->hasUnreadAnnouncements = auth()->user()->unreadAnnouncements()->exists();
+    }
+
     public function getSubheading(): string|Htmlable|null
     {
         return 'Welcome back, ' . auth()->user()->full_name . '.';
@@ -44,7 +51,7 @@ class Dashboard extends Page implements HasSchemas
                 'style' => 'display:none;'
             ])
             ->label('New announcements')
-            ->visible(fn() => auth()->user()->unreadAnnouncements()->exists())
+            ->visible(fn() => $this->hasUnreadAnnouncements)
             ->icon(PhosphorIcons::Bell)
             ->modalHeading(fn($record) => $record?->title ?? 'No new announcements')
             ->modalDescription(fn($record) => $record ? 'Announcement from: ' . $record->user->full_name : null)
