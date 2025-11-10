@@ -4,6 +4,8 @@ namespace App\Filament\Portal\Pages;
 
 use App\Enums\Icons\PhosphorIcons;
 use App\Filament\Portal\Widgets\ClientStats;
+use App\Models\AppointmentRequest;
+use App\Models\Branch;
 use App\Models\Patient;
 use App\Models\Service;
 use BackedEnum;
@@ -81,6 +83,7 @@ class Dashboard extends Page implements HasSchemas
      */
     public function createAppointmentRequestAction(): Action
     {
+        $branches = Branch::where('organisation_id', auth()->user()->organisation_id)->get();
         $patients = Patient::where('client_id', auth()->id())->get();
         $services = Service::all();
 
@@ -94,8 +97,21 @@ class Dashboard extends Page implements HasSchemas
             ->steps([
                 Step::make('Select pet')
                     ->icon(PhosphorIcons::Dog)
-                    ->schema(function () use ($patients, $services) {
+                    ->schema(function () use ($patients, $services, $branches) {
                         return [
+                            Radio::make('branch_id')
+                                ->label('Select preferred location')
+                                ->options(function () use ($patients, $branches) {
+                                    return $branches->pluck('name', 'id');
+                                })
+                                ->descriptions(function () use ($branches) {
+                                    return $branches
+                                        ->mapWithKeys(fn($branch) => [
+                                            $branch->id => $branch->name
+                                        ])
+                                        ->toArray();
+                                }),
+
                             Radio::make('patient_id')
                                 ->label('Select your pet')
                                 ->options(function () use ($patients) {
@@ -181,8 +197,22 @@ class Dashboard extends Page implements HasSchemas
                     ])
             ])
             ->action(function (array $data) {
-                dd($data);
+                $serviceDuration = Service::find($data['service_id'])->duration->minute;
+
+                $date = Carbon::parse($data['date']);
+                $from = $date->copy()->setTimeFromTimeString($data['time']);
+                $to = $from->copy()->addMinutes($serviceDuration);
+
+                $data['from'] = $from;
+                $data['to'] = $to;
+                $data['client_id'] = auth()->id();
+                $data['service_provider_id'] = 1;
+                $data['approval_status_id'] = 1;
+                $data['organisation_id'] = auth()->user()->organisation_id;
+
+                AppointmentRequest::create($data);
             })
+            ->successNotificationTitle('Appointment request created successfully')
             ->icon(PhosphorIcons::CalendarPlus)
             ->color('success')
             ->label('New appointment');

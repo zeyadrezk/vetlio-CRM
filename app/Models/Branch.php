@@ -44,4 +44,8 @@ class Branch extends Model implements HasCurrentTenantLabel
         return $this->hasMany(Room::class);
     }
 
+    public function appointmentRequests(): HasMany
+    {
+        return $this->hasMany(AppointmentRequest::class, 'branch_id');
+    }
 }
