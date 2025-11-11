@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Organisationable;
 use Filament\Models\Contracts\HasCurrentTenantLabel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,7 +14,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Branch extends Model implements HasCurrentTenantLabel
 {
-    use SoftDeletes, Organisationable;
+    /** @use HasFactory<\Database\Factories\BranchFactory> */
+    use SoftDeletes, HasFactory, Organisationable;
 
     protected $fillable = [
         'name',

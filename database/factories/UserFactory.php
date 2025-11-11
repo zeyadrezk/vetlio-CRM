@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Organisation;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -11,34 +13,88 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = User::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        $isMale = $this->faker->boolean(50);
+        $firstName = $this->faker->firstName($isMale ? 'male' : 'female');
+        $lastName = $this->faker->lastName;
+        $fullName = "{$firstName} {$lastName}";
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'organisation_id' => Organisation::factory(),
+            'primary_branch_id' => null, // popunjava se u seederu
+            'profile_image' => $this->faker->optional()->imageUrl(200, 200, 'people', true, 'Vetlio'),
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'title' => $this->faker->optional()->randomElement(['Dr. Vet. Med.', 'BSc. Vet.', null]),
+            'code' => strtoupper(Str::random(4)),
+            'gender_id' => $isMale ? 1 : 2, // ✅ int vrijednost
+            'date_of_birth' => $this->faker->optional()->dateTimeBetween('-50 years', '-22 years'),
+            'name' => $fullName,
+            'email' => strtolower(Str::slug($fullName)) . '@' . $this->faker->safeEmailDomain(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => 'password',
+            'phone' => $this->faker->optional()->phoneNumber,
+            'oib' => $this->faker->optional()->numerify('###########'),
+            'fiscalization_enabled' => $this->faker->boolean(30),
+            'signature_path' => null,
+            'active' => true,
+            'administrator' => false,
+            'service_provider' => $this->faker->boolean(70),
+            'color' => $this->faker->safeHexColor(),
             'remember_token' => Str::random(10),
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Mark user as inactive.
      */
-    public function unverified(): static
+    public function inactive(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+        return $this->state(fn() => ['active' => false]);
+    }
+
+    /**
+     * Mark user as administrator.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn() => [
+            'administrator' => true,
+            'service_provider' => false,
+            'title' => 'Administrator',
+            'fiscalization_enabled' => false,
+        ]);
+    }
+
+    /**
+     * Mark user as veterinarian.
+     */
+    public function veterinarian(): static
+    {
+        return $this->state(fn() => [
+            'administrator' => false,
+            'service_provider' => true,
+            'title' => 'Dr. Vet. Med.',
+            'fiscalization_enabled' => true,
+        ]);
+    }
+
+    /**
+     * Demo user for demo organisation.
+     */
+    public function demo(): static
+    {
+        return $this->state(fn() => [
+            'first_name' => 'Demo',
+            'last_name' => 'Demo',
+            'name' => 'demo',
+            'email' => 'demo@vetlio.app',
+            'administrator' => true,
+            'service_provider' => true,
+            'active' => true,
         ]);
     }
 }

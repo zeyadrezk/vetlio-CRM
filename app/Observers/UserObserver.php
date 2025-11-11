@@ -14,7 +14,6 @@ class UserObserver
             ->withPattern('USER-{{number}}')
             ->withPadding(5)->generate()['sequence'];
 
-        $model->password = bcrypt('12345678');
         $model->code = $code;
     }
 }

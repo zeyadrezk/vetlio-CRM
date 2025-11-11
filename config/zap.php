@@ -45,7 +45,7 @@ return [
     |
     */
     'conflict_detection' => [
-        'enabled' => true,
+        'enabled' => false,
         'buffer_minutes' => 0, // Buffer time between schedules
         'auto_resolve' => false, // Automatically resolve conflicts
         'strict_mode' => true, // Throw exceptions on conflicts

@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Organisation;
+use App\Models\ServiceGroup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,15 +11,34 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ServiceGroupFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = ServiceGroup::class;
+
     public function definition(): array
     {
         return [
-            //
+            'organisation_id' => Organisation::factory(),
+            'name' => $this->faker->randomElement([
+                'General Examination',
+                'Surgery',
+                'Vaccination',
+                'Laboratory',
+                'Diagnostics',
+                'Grooming',
+                'Dental Care',
+                'Emergency Services',
+            ]),
+            'color' => $this->faker->optional()->safeHexColor(),
         ];
+    }
+
+    /**
+     * State: demo group for predictable seeding.
+     */
+    public function demo(string $name = 'General Examination'): static
+    {
+        return $this->state(fn() => [
+            'name' => $name,
+            'color' => '#22c55e', // Tailwind green-500
+        ]);
     }
 }
