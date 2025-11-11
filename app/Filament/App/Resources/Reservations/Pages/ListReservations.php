@@ -4,6 +4,7 @@ namespace App\Filament\App\Resources\Reservations\Pages;
 
 use App\Enums\Icons\PhosphorIcons;
 use App\Enums\ReservationStatus;
+use App\Filament\App\Pages\AppointmentRequests;
 use App\Filament\App\Resources\MedicalDocuments\MedicalDocumentResource;
 use App\Filament\App\Resources\Reservations\ReservationResource;
 use CodeWithDennis\SimpleAlert\Components\SimpleAlert;
@@ -35,95 +36,113 @@ class ListReservations extends ListRecords
         $this->appointmentRequests = Filament::getTenant()->appointmentRequests()->where('approval_at', null)->get();
     }
 
+    /**
+     * @return Action
+     */
+    public function appointmentRequestsAction(): Action
+    {
+        return Action::make('appointment-requests')
+            ->modalIcon(PhosphorIcons::UserPlus)
+            ->modalDescription(function () {
+                return 'You have ' . count($this->appointmentRequests) . ' appointment requests';
+            })
+            ->url(function () {
+                return count($this->appointmentRequests) < 1 ? AppointmentRequests::getUrl() : null;
+            })
+            ->hiddenLabel()
+            ->tooltip('Appointment requests')
+            ->badge(function () {
+                return count($this->appointmentRequests);
+            })
+            ->modalSubmitAction(false)
+            ->button()
+            ->slideOver()
+            ->record(Filament::getTenant())
+            ->schema([
+                Action::make('view-all')
+                    ->url(AppointmentRequests::getUrl())
+                    ->icon(PhosphorIcons::CalendarPlus)
+                    ->link()
+                    ->label('View all request')
+                    ->extraAttributes(['class' => 'text-right']),
+                SimpleAlert::make('no-requests')
+                    ->success()
+                    ->border()
+                    ->visible(fn() => count($this->appointmentRequests) < 1)
+                    ->icon(PhosphorIcons::CheckCircleBold)
+                    ->columnSpanFull()
+                    ->title('No requests available'),
+                RepeatableEntry::make('appointmentRequests')
+                    ->hiddenLabel()
+                    ->contained(false)
+                    ->getStateUsing(function () {
+                        return $this->appointmentRequests;
+                    })
+
+                    ->visible(fn() => $this->appointmentRequests)
+                    ->schema([
+                        Section::make(function ($record) {
+                            return new HtmlString("<small>Request from {$record->client->full_name}</small>");
+                        })
+                            ->compact()
+                            ->icon(PhosphorIcons::UserPlus)
+                            ->columns(3)
+                            ->headerActions([
+                                Action::make('approve')
+                                    ->label('Approve')
+                                    ->link()
+                                    ->requiresConfirmation()
+                                    ->icon(PhosphorIcons::CheckCircleBold)
+                                    ->successNotificationTitle('The appointment request has been approved')
+                                    ->action(function ($record, $component, Component $livewire, $get) {
+                                        $record->update([
+                                            'approval_status_id' => 2,
+                                            'approval_at' => now(),
+                                        ]);
+                                        $livewire->appointmentRequests = $livewire->appointmentRequests->reject(fn($r) => $r->id === $record->id);
+                                    }),
+                                Action::make('deny')
+                                    ->label('Deny')
+                                    ->link()
+                                    ->color('danger')
+                                    ->icon(PhosphorIcons::XCircleBold)
+                                    ->successNotificationTitle('The appointment request has been denied')
+                                    ->action(function ($record, $livewire) {
+                                        $record->update([
+                                            'approval_status_id' => 3,
+                                            'approval_at' => now(),
+                                        ]);
+
+                                        $livewire->appointmentRequests = $livewire->appointmentRequests->reject(fn($r) => $r->id === $record->id);
+                                    })
+                            ])
+                            ->schema([
+                                TextEntry::make('client.full_name')
+                                    ->label('Client'),
+                                TextEntry::make('client.email')
+                                    ->label('Email'),
+                                TextEntry::make('client.phone')
+                                    ->label('Phone')
+                                    ->default('-'),
+                                TextEntry::make('patient.name')
+                                    ->label('Patient'),
+                                TextEntry::make('from')
+                                    ->label('Date')
+                                    ->dateTime(),
+                                TextEntry::make('service.name')
+                                    ->label('Service'),
+
+                            ])
+                    ])
+            ])
+            ->badgeColor('success')
+            ->icon(PhosphorIcons::UserPlus);
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('appointment-requests')
-                ->modalIcon(PhosphorIcons::UserPlus)
-                ->modalDescription(function () {
-                    return 'You have ' . count($this->appointmentRequests) . ' appointment requests';
-                })
-                ->hiddenLabel()
-                ->tooltip('Appointment requests')
-                ->badge(function () {
-                    return count($this->appointmentRequests);
-                })
-                ->modalSubmitAction(false)
-                ->button()
-                ->slideOver()
-                ->record(Filament::getTenant())
-                ->schema([
-                    SimpleAlert::make('no-requests')
-                        ->success()
-                        ->border()
-                        ->visible(fn() => count($this->appointmentRequests) < 1)
-                        ->icon(PhosphorIcons::CheckCircleBold)
-                        ->columnSpanFull()
-                        ->title('No requests available'),
-                    RepeatableEntry::make('appointmentRequests')
-                        ->hiddenLabel()
-                        ->contained(false)
-                        ->getStateUsing(function () {
-                            return $this->appointmentRequests;
-                        })
-                        ->visible(fn() => $this->appointmentRequests)
-                        ->schema([
-                            Section::make(function ($record) {
-                                return new HtmlString("<small>Request from {$record->client->full_name}</small>");
-                            })
-                                ->compact()
-                                ->icon(PhosphorIcons::UserPlus)
-                                ->columns(3)
-                                ->headerActions([
-                                    Action::make('approve')
-                                        ->label('Approve')
-                                        ->link()
-                                        ->requiresConfirmation()
-                                        ->icon(PhosphorIcons::CheckCircleBold)
-                                        ->successNotificationTitle('The appointment request has been approved')
-                                        ->action(function ($record, $component, Component $livewire, $get) {
-                                            $record->update([
-                                                'approval_status_id' => 2,
-                                                'approval_at' => now(),
-                                            ]);
-                                            $livewire->appointmentRequests = $livewire->appointmentRequests->reject(fn($r) => $r->id === $record->id);
-                                        }),
-                                    Action::make('deny')
-                                        ->label('Deny')
-                                        ->link()
-                                        ->color('danger')
-                                        ->icon(PhosphorIcons::XCircleBold)
-                                        ->successNotificationTitle('The appointment request has been denied')
-                                        ->action(function ($record, $livewire) {
-                                            $record->update([
-                                                'approval_status_id' => 3,
-                                                'approval_at' => now(),
-                                            ]);
-
-                                            $livewire->appointmentRequests = $livewire->appointmentRequests->reject(fn($r) => $r->id === $record->id);
-                                        })
-                                ])
-                                ->schema([
-                                    TextEntry::make('client.full_name')
-                                        ->label('Client'),
-                                    TextEntry::make('client.email')
-                                        ->label('Email'),
-                                    TextEntry::make('client.phone')
-                                        ->label('Phone')
-                                        ->default('-'),
-                                    TextEntry::make('patient.name')
-                                        ->label('Patient'),
-                                    TextEntry::make('from')
-                                        ->label('Date')
-                                        ->dateTime(),
-                                    TextEntry::make('service.name')
-                                        ->label('Service'),
-
-                                ])
-                        ])
-                ])
-                ->badgeColor('success')
-                ->icon(PhosphorIcons::UserPlus),
+            $this->appointmentRequestsAction(),
 
             Action::make('new-medical-document')
                 ->icon(PhosphorIcons::FilePlus)

@@ -65,7 +65,7 @@ class AppPanelProvider extends PanelProvider
                     950 => '#072341',
                 ],
             ])
-            ->databaseTransactions(true)
+            ->databaseTransactions()
             ->font('Mulish')
             ->databaseNotifications()
             ->databaseNotificationsPolling('5s')
@@ -79,10 +79,6 @@ class AppPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\Filament\App\Widgets')
             ->pages([
                 Dashboard::class, DoctorReservations::class, NotPayedInvoices::class
-            ])
-            ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
             ])
             ->userMenuItems([
                 Action::make('settings')

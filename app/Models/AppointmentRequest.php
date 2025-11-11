@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AppointmentRequestStatus;
 use App\Traits\Organisationable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,10 +33,11 @@ class AppointmentRequest extends Model
     ];
 
     protected $casts = [
+        'approval_status_id' => AppointmentRequestStatus::class,
         'date' => 'date',
-        'from' => 'timestamp',
-        'to' => 'timestamp',
-        'approval_at' => 'timestamp',
+        'from' => 'datetime',
+        'to' => 'datetime',
+        'approval_at' => 'datetime',
     ];
 
     public function client(): BelongsTo
@@ -63,5 +65,8 @@ class AppointmentRequest extends Model
         return $this->belongsTo(User::class, 'service_provider_id');;
     }
 
-
+    public function approvalBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approval_by');
+    }
 }
