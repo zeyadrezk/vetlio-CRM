@@ -188,7 +188,7 @@ npm run build
 
 ### 5) Run app
 
-1. Create subdomain org1.vetlio.test in your hosts file.
+1. Create subdomain `org1.vetlio.test` in your hosts file.
 2. Navigate to https://org1.vetlio.test/app/login
 3. Login with email `admin@org1.com` and password `password`
 ---
