@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Contracts\HolidayProvider;
 use App\Enums\Icons\PhosphorIcons;
-use App\Models\Invoice;
 use App\Services\Holidays\NagerDateHolidayProvider;
+use App\Subscribers\AppointmentRequestSubscriber;
+use App\Subscribers\ContractEventsSubscriber;
+use App\Subscribers\TicketEventsSubscriber;
 use Awcodes\Palette\Forms\Components\ColorPicker;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -16,8 +18,8 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         Number::useCurrency('EUR');
 
         $this->initGate();
+        $this->registerEventSubscribers();
 
         //Filament
         $this->configureFilamentActions();
@@ -118,5 +121,10 @@ class AppServiceProvider extends ServiceProvider
 
             return null;
         });
+    }
+
+    private function registerEventSubscribers(): void
+    {
+        Event::subscribe(AppointmentRequestSubscriber::class);
     }
 }
