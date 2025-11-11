@@ -67,6 +67,22 @@ class Reservation extends Model implements Eventable
         );
     }
 
+    #[Scope]
+    public function confirmed(Builder $query, $confirmed = true): void
+    {
+        $query->when(
+            $confirmed,
+            fn($q) => $q->whereNotNull('confirmed_at'),
+            fn($q) => $q->whereNull('confirmed_at'),
+        );
+    }
+
+    #[Scope]
+    public function ordered(Builder $query): void
+    {
+        $query->where('status_id', ReservationStatus::Ordered->value);
+    }
+
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);

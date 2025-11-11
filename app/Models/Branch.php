@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\Organisationable;
 use Filament\Models\Contracts\HasCurrentTenantLabel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,6 +24,13 @@ class Branch extends Model implements HasCurrentTenantLabel
         'active',
         'price_list_id'
     ];
+
+    public function fullAddress(): Attribute
+    {
+        return Attribute::make(function () {
+            return implode(', ', [$this->address, $this->city, $this->zip_code]);
+        });
+    }
 
     public function getCurrentTenantLabel(): string
     {
