@@ -6,6 +6,7 @@ use App\Enums\EmailTemplateGroup;
 use App\Enums\EmailTemplateType;
 use App\Filament\Shared\Columns\CreatedAtColumn;
 use App\Filament\Shared\Columns\UpdatedAtColumn;
+use App\Services\EmailTemplate\EmailTemplateService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -41,6 +42,9 @@ class EmailTemplatesTable
 
                 ToggleColumn::make('active')
                     ->sortable()
+                    ->afterStateUpdated(function ($record) {
+                        app(EmailTemplateService::class)->clearTemplateCache($record->branch_id, $record->type_id);
+                    })
                     ->label('Active'),
 
                 CreatedAtColumn::make('created_at'),

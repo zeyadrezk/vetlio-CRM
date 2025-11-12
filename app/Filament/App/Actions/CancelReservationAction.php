@@ -16,10 +16,13 @@ use Filament\Support\Enums\Width;
 
 class CancelReservationAction extends Action
 {
+    private bool $hasEmailTemplate;
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->hasEmailTemplate = $this->checkEmailTemplateExists();
         $this->label('Cancel reservation');
         $this->icon(PhosphorIcons::CalendarX);
         $this->modalWidth(Width::Large);
@@ -45,17 +48,16 @@ class CancelReservationAction extends Action
                 ->icon(PhosphorIcons::Warning)
                 ->columnSpanFull()
                 ->border()
-                ->visible(function () {
-                    return !app(EmailTemplateService::class)->getTemplateContent(Filament::getTenant()->id, EmailTemplateType::CancelAppointment->value);
-                })->title('No email template found')
+                ->visible(!$this->hasEmailTemplate)
+                ->title('No email template found')
                 ->description('Please create an email template for this action'),
 
             Toggle::make('send_email')
                 ->visible(function () {
                     return !auth()->guard('portal')->check();
                 })
-                ->disabled(function () {
-                    return !app(EmailTemplateService::class)->getTemplateContent(Filament::getTenant()->id, EmailTemplateType::CancelAppointment->value);
+                ->disabled(function ($record) {
+                    return !$this->hasEmailTemplate && $record->client->email == null;
                 })
                 ->hint('Send email to client about cancellation')
                 ->label('Send email')
@@ -69,5 +71,10 @@ class CancelReservationAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'cancel-reservation';
+    }
+
+    private function checkEmailTemplateExists()
+    {
+        return app(EmailTemplateService::class)->getTemplateContent(Filament::getTenant()->id, EmailTemplateType::CancelAppointment->value) != null;
     }
 }
