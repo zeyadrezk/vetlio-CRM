@@ -4,19 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('announcement_reads', function (Blueprint $table) {
+        Schema::create('dismissed_announcements', function (Blueprint $table) {
             $table->id();
+            $table->morphs('dismissable');
             $table->unsignedInteger('announcement_id');
-            $table->morphs('reader');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            $table->unique(['announcement_id', 'reader_id', 'reader_type']);
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('announcement_reads');
+        Schema::dropIfExists('dismissed_announcements');
     }
 };

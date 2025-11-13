@@ -5,35 +5,19 @@ namespace App\Filament\Portal\Pages;
 use App\Enums\Icons\PhosphorIcons;
 use App\Filament\Portal\Actions\AppointmentRequestAction;
 use App\Filament\Portal\Widgets\ClientStats;
-use App\Models\AppointmentRequest;
-use App\Models\Branch;
-use App\Models\Patient;
-use App\Models\Service;
 use BackedEnum;
-use Carbon\Carbon;
 use CodeWithDennis\SimpleAlert\Components\SimpleAlert;
 use Filament\Actions\Action;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Text;
-use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Collection;
 
 class Dashboard extends Page implements HasSchemas
 {
@@ -58,8 +42,6 @@ class Dashboard extends Page implements HasSchemas
     {
         return 'Welcome back, ' . auth()->user()->full_name . '.';
     }
-
-
 
     public function announcementsAction(): Action
     {

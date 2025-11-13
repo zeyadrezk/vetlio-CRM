@@ -17,37 +17,45 @@ class Announcement extends Model
     protected $fillable = [
         'title',
         'content',
+        'user_id',
         'for_users',
         'for_clients',
         'starts_at',
         'ends_at',
-        'is_active',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
-        'active' => 'boolean',
         'for_users' => 'boolean',
         'for_clients' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        parent::booted();
+
+        static::creating(function ($announcement) {
+            $announcement->user_id = auth()->id();
+        });
+    }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function users(): MorphToMany
+    public function dismissedByUsers(): MorphToMany
     {
-        return $this->morphedByMany(User::class, 'reader', 'announcement_reads')
-            ->withPivot('read_at')
+        return $this->morphedByMany(User::class, 'dismissable', 'dismissed_announcements')
+            ->withPivot(['read_at'])
             ->withTimestamps();
     }
 
-    public function clients(): MorphToMany
+    public function dismissedByClients(): MorphToMany
     {
-        return $this->morphedByMany(Client::class, 'reader', 'announcement_reads')
-            ->withPivot('read_at')
+        return $this->morphedByMany(Client::class, 'dismissable', 'dismissed_announcements')
+            ->withPivot(['read_at'])
             ->withTimestamps();
     }
 

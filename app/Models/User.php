@@ -13,11 +13,13 @@ use Filament\Panel;
 use Guava\Calendar\Contracts\Resourceable;
 use Guava\Calendar\ValueObjects\CalendarResource;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -33,8 +35,7 @@ class User extends Authenticatable implements HasTenants, HasDefaultTenant, Fila
         Notifiable,
         Organisationable,
         SoftDeletes,
-        HasSchedules,
-        HasAnnouncements;
+        HasSchedules;
 
     /**
      * The attributes that are mass assignable.
@@ -138,6 +139,42 @@ class User extends Authenticatable implements HasTenants, HasDefaultTenant, Fila
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function dismissedAnnouncements(): MorphToMany
+    {
+        return $this->morphToMany(Announcement::class, 'dismissable', 'dismissed_announcements')
+            ->withPivot(['read_at'])
+            ->withTimestamps();
+    }
+
+    public function unreadAnnouncements(): Builder
+    {
+        return Announcement::query()
+            ->forUsers()
+            ->active()
+            ->where('user_id', '!=', $this->id)
+            ->whereDoesntHave('dismissedByUsers', function ($q) {
+                $q->where('dismissable_id', $this->id)
+                    ->where('dismissable_type', static::class);
+            })
+            ->orderBy('starts_at');
+    }
+
+    public function nextUnreadAnnouncement()
+    {
+        return $this->unreadAnnouncements()->first();
+    }
+
+    public function markAnnouncementAsRead(Announcement $announcement): void
+    {
+        if (!$announcement->for_users) {
+            return;
+        }
+
+        $this->dismissedAnnouncements()->syncWithoutDetaching([
+            $announcement->getKey() => ['read_at' => now()],
+        ]);
     }
 
     public function toCalendarResource(): CalendarResource

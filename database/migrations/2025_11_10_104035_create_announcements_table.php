@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->boolean('for_clients')->default(false);
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
-            $table->boolean('active')->default(true);
             $table->unsignedInteger('organisation_id');
             $table->softDeletes();
             $table->timestamps();

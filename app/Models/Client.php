@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Contracts\TaskRelated;
-use App\Traits\HasAnnouncements;
 use App\Traits\Organisationable;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,7 +26,7 @@ use Swindon\FilamentHashids\Traits\HasHashid;
 class Client extends Authenticatable implements HasName, HasAvatar, MustVerifyEmail, TaskRelated
 {
     /** @use HasFactory<\Database\Factories\ClientFactory> */
-    use HasFactory, SoftDeletes, Notifiable, Organisationable, HasTags, HasHashid, HasAnnouncements;
+    use HasFactory, SoftDeletes, Notifiable, Organisationable, HasTags, HasHashid;
 
     protected $fillable = [
         'first_name',
@@ -169,9 +170,39 @@ class Client extends Authenticatable implements HasName, HasAvatar, MustVerifyEm
         return $this->hasMany(Patient::class, 'client_id');
     }
 
-    public function nextUnreadAnnouncement(): ?\App\Models\Announcement
+    public function dismissedAnnouncements(): MorphToMany
     {
-        return $this->unreadAnnouncements()->orderBy('created_at')->first();
+        return $this->morphToMany(Announcement::class, 'dismissable', 'dismissed_announcements')
+            ->withPivot(['read_at'])
+            ->withTimestamps();
+    }
+
+    public function unreadAnnouncements(): Builder
+    {
+        return Announcement::query()
+            ->forClients()
+            ->active()
+            ->whereDoesntHave('dismissedByClients', function ($q) {
+                $q->where('dismissable_id', $this->id)
+                    ->where('dismissable_type', static::class);
+            })
+            ->orderBy('starts_at');
+    }
+
+    public function nextUnreadAnnouncement()
+    {
+        return $this->unreadAnnouncements()->first();
+    }
+
+    public function markAnnouncementAsRead(Announcement $announcement): void
+    {
+        if (!$announcement->for_clients) {
+            return;
+        }
+
+        $this->dismissedAnnouncements()->syncWithoutDetaching([
+            $announcement->getKey() => ['read_at' => now()],
+        ]);
     }
 
     public function relatedValue()
