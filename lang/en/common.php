@@ -1,0 +1,61 @@
+<?php
+
+return [
+    'fields' => [
+        'email' => 'Email',
+        'phone' => 'Phone',
+        'address' => 'Address',
+        'city' => 'City',
+        'postal_code' => 'Postal code',
+        'country' => 'Country',
+        'tags' => 'Tags',
+        'created_at' => 'Created at',
+        'updated_at' => 'Updated at',
+        'first_name' => 'First name',
+        'last_name' => 'Last name',
+        'full_name' => 'Full name',
+        'name' => 'Name',
+        'code' => 'Code',
+        'date' => 'Date',
+        'time' => 'Time',
+        'status' => 'Status',
+        'description' => 'Description',
+        'notes' => 'Notes',
+        'remarks' => 'Remarks',
+    ],
+
+    'actions' => [
+        'save' => 'Save',
+        'cancel' => 'Cancel',
+        'delete' => 'Delete',
+        'edit' => 'Edit',
+        'view' => 'View',
+        'create' => 'Create',
+        'add' => 'Add',
+        'filter' => 'Filter',
+        'search' => 'Search',
+        'confirm' => 'Confirm',
+        'send' => 'Send',
+        'send_email' => 'Send email',
+        'export' => 'Export',
+        'import' => 'Import',
+    ],
+
+    'messages' => [
+        'success' => 'Operation completed successfully',
+        'error' => 'An error occurred',
+        'saved' => 'Saved successfully',
+        'deleted' => 'Deleted successfully',
+        'updated' => 'Updated successfully',
+        'created' => 'Created successfully',
+        'no_data' => 'No data',
+        'no_results' => 'No results found',
+    ],
+
+    'gender' => [
+        'male' => 'Male',
+        'female' => 'Female',
+        'other' => 'Other',
+        'unspecified' => 'Unspecified',
+    ],
+];
