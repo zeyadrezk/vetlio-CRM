@@ -5,6 +5,7 @@ namespace App\Filament\Portal\Resources\Patients;
 use App\Enums\Icons\PhosphorIcons;
 use App\Filament\Portal\Resources\Patients\Pages\ListPatients;
 use App\Filament\Portal\Resources\Patients\Pages\PatientAppointments;
+use App\Filament\Portal\Resources\Patients\Pages\PatientMedicalDocuments;
 use App\Filament\Portal\Resources\Patients\Pages\ViewPatient;
 use App\Filament\Portal\Resources\Patients\Schemas\PatientForm;
 use App\Filament\Portal\Resources\Patients\Schemas\PatientInfolist;
@@ -35,6 +36,7 @@ class PatientResource extends Resource
         return $page->generateNavigationItems([
             ViewPatient::class,
             PatientAppointments::class,
+            PatientMedicalDocuments::class
         ]);
     }
 
@@ -83,6 +85,7 @@ class PatientResource extends Resource
             'view' => ViewPatient::route('/{record}'),
             //'edit' => EditPatient::route('/{record}/edit'),
             'appointments' => PatientAppointments::route('/{record}/appointments'),
+            'medical-documents' => PatientMedicalDocuments::route('/{record}/medical-documents'),
         ];
     }
 

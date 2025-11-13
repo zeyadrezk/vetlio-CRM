@@ -21,12 +21,12 @@ class PatientAppointments extends ManageRelatedRecords
 
     protected static ?string $navigationLabel = 'Appointments';
 
+    protected static ?string $breadcrumb = 'Appointments';
+
     public function getTitle(): string|Htmlable
     {
         return 'Appointments of ' . $this->getRecord()->name;
     }
-
-    protected static ?string $breadcrumb = 'Appointments';
 
     public function getSubheading(): string|Htmlable|null
     {
