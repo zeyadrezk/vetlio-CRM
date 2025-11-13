@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 
-class PatientReservations extends ManageRelatedRecords
+class PatientAppointments extends ManageRelatedRecords
 {
     protected static string $resource = PatientResource::class;
 
@@ -26,9 +26,9 @@ class PatientReservations extends ManageRelatedRecords
 
     protected static string|BackedEnum|null $navigationIcon = PhosphorIcons::CalendarPlus;
 
-    protected static ?string $title = 'Reservations';
+    protected static ?string $title = 'Appointments';
 
-    protected static ?string $navigationLabel = 'Reservations';
+    protected static ?string $navigationLabel = 'Appointments';
 
     public function getSubheading(): string|Htmlable|null
     {

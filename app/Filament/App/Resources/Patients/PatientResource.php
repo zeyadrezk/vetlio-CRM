@@ -7,7 +7,7 @@ use App\Filament\App\Resources\Patients\Pages\ListPatients;
 use App\Filament\App\Resources\Patients\Pages\PatientDocuments;
 use App\Filament\App\Resources\Patients\Pages\PatientMedicalDocuments;
 use App\Filament\App\Resources\Patients\Pages\PatientReminders;
-use App\Filament\App\Resources\Patients\Pages\PatientReservations;
+use App\Filament\App\Resources\Patients\Pages\PatientAppointments;
 use App\Filament\App\Resources\Patients\Pages\ViewPatient;
 use App\Filament\App\Resources\Patients\Schemas\PatientForm;
 use App\Filament\App\Resources\Patients\Schemas\PatientInfolist;
@@ -68,7 +68,7 @@ class PatientResource extends Resource
     {
         return $page->generateNavigationItems([
             ViewPatient::class,
-            PatientReservations::class,
+            PatientAppointments::class,
             PatientMedicalDocuments::class,
             PatientDocuments::class,
             PatientReminders::class,
@@ -102,7 +102,7 @@ class PatientResource extends Resource
             //'create' => CreatePatient::route('/create'),
             'view' => ViewPatient::route('/{record}'),
             //'edit' => EditPatient::route('/{record}/edit'),
-            'reservations' => PatientReservations::route('/{record}/reservations'),
+            'reservations' => PatientAppointments::route('/{record}/reservations'),
             'medical-documents' => PatientMedicalDocuments::route('/{record}/medical-documents'),
             'documents' => PatientDocuments::route('/{record}/documents'),
             'reminders' => PatientReminders::route('/{record}/reminders'),

@@ -30,6 +30,7 @@ class DocumentForm
                     ->label('Visible in portal'),
 
                 SpatieMediaLibraryFileUpload::make('media')
+                    ->required()
                     ->label('Files')
                     ->downloadable()
                     ->collection('documents')
