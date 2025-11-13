@@ -71,6 +71,11 @@ class AppPanelProvider extends PanelProvider
             ->maxContentWidth(Width::ScreenTwoExtraLarge)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->viteTheme('resources/css/filament/app/theme.css')
+            ->locales([
+                'en' => 'English',
+                'ar' => 'العربية',
+            ])
+            ->defaultLocale('en')
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\Filament\App\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\Filament\App\Pages')
             ->discoverClusters(in: app_path('Filament/App/Clusters'), for: 'App\Filament\App\Clusters')

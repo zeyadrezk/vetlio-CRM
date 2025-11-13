@@ -52,8 +52,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Table::configureUsing(function (Table $table) {
             $table->striped(true);
-            $table->emptyStateHeading('No data');
-            $table->emptyStateDescription('Currently there is no data to display.');
+            $table->emptyStateHeading(__('filament::table.empty.heading'));
+            $table->emptyStateDescription(__('filament::table.empty.description'));
             $table->emptyStateIcon(PhosphorIcons::MinusCircle);
             $table->emptyStateActions([CreateAction::make()]);
         });
@@ -81,8 +81,8 @@ class AppServiceProvider extends ServiceProvider
     public function configureFilamentActions(): void
     {
         CreateAction::configureUsing(function (CreateAction $action) {
-            $action->label('Add');
-            $action->modalHeading('Add new item');
+            $action->label(__('filament::actions.add.label'));
+            $action->modalHeading(__('filament::actions.add.modal.heading', ['label' => '']));
             $action->icon(Heroicon::Plus);
             $action->slideOver();
             $action->modalIcon(Heroicon::Plus);
@@ -90,7 +90,7 @@ class AppServiceProvider extends ServiceProvider
 
         EditAction::configureUsing(function (EditAction $action) {
             $action->hiddenLabel();
-            $action->modalHeading('Edit item');
+            $action->modalHeading(__('filament::actions.edit.label'));
             $action->icon(Heroicon::Pencil);
             $action->slideOver();
             $action->modalIcon(Heroicon::Pencil);
@@ -98,14 +98,14 @@ class AppServiceProvider extends ServiceProvider
 
         DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->hiddenLabel();
-            $action->modalHeading('Delete item');
+            $action->modalHeading(__('filament::actions.delete.label'));
             $action->icon(Heroicon::Trash);
             $action->modalIcon(Heroicon::Trash);
         });
 
         ViewAction::configureUsing(function (ViewAction $action) {
             $action->hiddenLabel();
-            $action->modalHeading('View');
+            $action->modalHeading(__('filament::actions.view.label'));
             $action->icon(Heroicon::Eye);
             $action->slideOver();
             $action->modalIcon(Heroicon::Eye);

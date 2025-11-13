@@ -34,6 +34,11 @@ class PublicPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->viteTheme('resources/css/filament/public/theme.css')
+            ->locales([
+                'en' => 'English',
+                'ar' => 'العربية',
+            ])
+            ->defaultLocale('en')
             ->discoverResources(in: app_path('Filament/Public/Resources'), for: 'App\Filament\Public\Resources')
             ->discoverPages(in: app_path('Filament/Public/Pages'), for: 'App\Filament\Public\Pages')
             ->discoverWidgets(in: app_path('Filament/Public/Widgets'), for: 'App\Filament\Public\Widgets')
