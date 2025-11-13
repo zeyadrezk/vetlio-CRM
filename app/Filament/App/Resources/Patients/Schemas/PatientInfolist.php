@@ -2,9 +2,14 @@
 
 namespace App\Filament\App\Resources\Patients\Schemas;
 
+use App\Enums\Icons\HealthIcons;
 use App\Enums\Icons\PhosphorIcons;
 use CodeWithDennis\SimpleAlert\Components\SimpleAlert;
 use Filament\Actions\Action;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class PatientInfolist
@@ -55,6 +60,52 @@ class PatientInfolist
                             ? 'Note: ' . $record->dangerous_note
                             : null;
                     }),
+
+                Section::make()
+                    ->columns(4)
+                    ->columnSpanFull()
+                    ->schema([
+                        ImageEntry::make('photo')
+                            ->circular()
+                            ->defaultImageUrl(asset('img/default-patient-profile.jpg'))
+                            ->label('Photo'),
+
+                        Grid::make(3)
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->label('Name'),
+
+                                TextEntry::make('species.name')
+                                    ->icon(PhosphorIcons::Dog)
+                                    ->label('Species'),
+
+                                TextEntry::make('breed.name')
+                                    ->icon(PhosphorIcons::Horse)
+                                    ->label('Breed'),
+
+                                TextEntry::make('color')
+                                    ->icon(PhosphorIcons::Palette)
+                                    ->label('Color'),
+
+                                TextEntry::make('date_of_birth')
+                                    ->icon(PhosphorIcons::Calendar)
+                                    ->date()
+                                    ->label('Date of birth'),
+
+                                TextEntry::make('remarks')
+                                    ->icon(PhosphorIcons::Warning)
+                                    ->label('Remarks')
+                                    ->badge()
+                                    ->default('-'),
+
+                                TextEntry::make('allergies')
+                                    ->icon(HealthIcons::FBloodAN)
+                                    ->label('Allergies')
+                                    ->default('-')
+                            ])
+                            ->columnSpan(3)
+
+                    ])
             ]);
     }
 }
