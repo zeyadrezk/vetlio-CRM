@@ -39,13 +39,19 @@ class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panelConfig = $panel
             ->default()
             ->id('app')
             ->path('app')
             ->tenant(Branch::class)
-            ->spa()
-            ->domain(request()->server('HTTP_HOST'))
+            ->spa();
+
+        // Only apply domain scoping in production (not local dev)
+        if (! app()->environment('local')) {
+            $panelConfig->domain(request()->server('HTTP_HOST'));
+        }
+
+        return $panelConfig
             ->login()
             ->passwordReset()
             ->colors([
@@ -79,6 +85,11 @@ class AppPanelProvider extends PanelProvider
                 Dashboard::class, DoctorReservations::class, NotPayedInvoices::class
             ])
             ->userMenuItems([
+                Action::make('switchOrganisation')
+                    ->label('Switch Organisation')
+                    ->visible(fn(): bool => app()->environment('local'))
+                    ->url(fn(): string => route('select-tenant'))
+                    ->icon('heroicon-o-building-office-2'),
                 Action::make('settings')
                     ->label('Settings')
                     ->visible(function () {

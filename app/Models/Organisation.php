@@ -71,6 +71,11 @@ class Organisation extends Model
         return $this->hasMany(User::class, 'organisation_id');
     }
 
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class, 'organisation_id');
+    }
+
     public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);

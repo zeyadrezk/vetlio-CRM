@@ -29,7 +29,7 @@ class PortalPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panelConfig = $panel
             ->id('portal')
             ->path('portal')
             ->login()
@@ -38,8 +38,14 @@ class PortalPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Green,
             ])
-            ->font('Mulish')
-            ->domain(request()->server('HTTP_HOST'))
+            ->font('Mulish');
+
+        // Only apply domain scoping in production (not local dev)
+        if (! app()->environment('local')) {
+            $panelConfig->domain(request()->server('HTTP_HOST'));
+        }
+
+        return $panelConfig
             ->topNavigation()
             ->databaseNotifications()
             ->viteTheme('resources/css/filament/portal/theme.css')

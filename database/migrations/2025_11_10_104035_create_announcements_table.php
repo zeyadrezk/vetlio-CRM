@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->unsignedInteger('user_id');
             $table->boolean('for_users')->default(true);
             $table->boolean('for_clients')->default(false);
+            $table->boolean('active')->default(true);
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
             $table->unsignedInteger('organisation_id');
