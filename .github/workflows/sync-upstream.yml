@@ -1,0 +1,85 @@
+name: Sync Fork with Upstream
+
+# Run daily at 2:00 AM UTC
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          # Replace 'UPSTREAM_OWNER' and 'UPSTREAM_REPO' with actual values
+          # Example: git remote add upstream https://github.com/original-owner/vetlio-CRM.git
+          if ! git remote | grep -q upstream; then
+            git remote add upstream https://github.com/UPSTREAM_OWNER/UPSTREAM_REPO.git
+          fi
+
+      - name: Fetch upstream changes
+        run: git fetch upstream
+
+      - name: Get current branch
+        id: branch
+        run: echo "branch=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Merge upstream main into fork main
+        run: |
+          git checkout main || git checkout master || echo "Main branch not found"
+          MAIN_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+          # Attempt to merge upstream main
+          if git merge upstream/main --no-edit; then
+            echo "Successfully merged upstream/main"
+          elif git merge upstream/master --no-edit; then
+            echo "Successfully merged upstream/master"
+          else
+            echo "No upstream main or master branch to merge"
+            exit 0
+          fi
+
+      - name: Push changes to fork
+        run: |
+          git push origin HEAD
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create sync report
+        if: success()
+        run: |
+          echo "## Sync Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Successfully synced fork with upstream repository" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Sync Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Latest Commits:**" >> $GITHUB_STEP_SUMMARY
+          git log -5 --oneline >> $GITHUB_STEP_SUMMARY
+
+      - name: Handle merge conflicts
+        if: failure()
+        run: |
+          echo "## ⚠️ Sync Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The automatic sync encountered conflicts that require manual resolution." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Action Required:**" >> $GITHUB_STEP_SUMMARY
+          echo "1. Pull the latest changes from your fork" >> $GITHUB_STEP_SUMMARY
+          echo "2. Add upstream remote: \`git remote add upstream <upstream-url>\`" >> $GITHUB_STEP_SUMMARY
+          echo "3. Fetch upstream: \`git fetch upstream\`" >> $GITHUB_STEP_SUMMARY
+          echo "4. Merge manually: \`git merge upstream/main\`" >> $GITHUB_STEP_SUMMARY
+          echo "5. Resolve conflicts and push" >> $GITHUB_STEP_SUMMARY
