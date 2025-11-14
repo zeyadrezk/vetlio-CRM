@@ -7,13 +7,13 @@ use App\Filament\App\Resources\Patients\PatientResource;
 use App\Filament\App\Resources\Reservations\Schemas\ReservationForm;
 use App\Filament\App\Resources\Reservations\Tables\ReservationsTable;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
@@ -50,13 +50,6 @@ class PatientAppointments extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return ReservationsTable::configure($table)
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make()
-                    ->visible(function($record) {
-                        return !$record->canceled_at;
-                    })
-            ])
             ->filters([]);
     }
 
@@ -75,15 +68,15 @@ class PatientAppointments extends ManageRelatedRecords
                     return $this->getRecord()->reservations()->canceled(false)->count();
                 })
                 ->icon(PhosphorIcons::CalendarCheck)
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('canceled', false)),
+                ->modifyQueryUsing(fn(Builder $query) => $query->canceled(false)),
             'canceled' => Tab::make()
                 ->label('Canceled')
                 ->badgeColor('danger')
                 ->badge(function (Builder $query) {
-                    return $this->getRecord()->reservations()->canceled(false)->count();
+                    return $this->getRecord()->reservations()->canceled()->count();
                 })
                 ->icon(PhosphorIcons::CalendarX)
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('canceled', true)),
+                ->modifyQueryUsing(fn(Builder $query) => $query->canceled()),
         ];
     }
 }

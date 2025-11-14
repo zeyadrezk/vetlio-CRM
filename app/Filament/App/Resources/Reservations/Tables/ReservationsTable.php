@@ -8,6 +8,7 @@ use App\Filament\App\Actions\ClientCardAction;
 use App\Filament\App\Resources\MedicalDocuments\MedicalDocumentResource;
 use App\Filament\App\Resources\Reservations\Actions\MoveBack;
 use App\Filament\App\Resources\Reservations\Actions\MoveRight;
+use App\Filament\App\Resources\Reservations\Pages\ListReservations;
 use App\Models\Reservation;
 use Awcodes\BadgeableColumn\Components\Badge;
 use Awcodes\BadgeableColumn\Components\BadgeableColumn;
@@ -147,13 +148,9 @@ class ReservationsTable
     public static function getRecordActions(): array
     {
         return [
-            MoveBack::make('back')
-                ->visible(function ($record) {
-                    return $record->status_id->canMoveBack() && !$record->is_canceled;
-                }),
+            MoveBack::make('back'),
 
-            MoveRight::make('right')
-                ->visible(fn($record) => $record->status_id->canMoveRight() && !$record->is_canceled),
+            MoveRight::make('right'),
 
             Action::make('create-medical-document')
                 ->tooltip('Create Medical Record')
